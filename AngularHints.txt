@@ -1,0 +1,345 @@
+
+
+
+--- modulos
+- importado pelo "imports"
+
+
+--- metodo barrels: auxilia a importação
+- criar um arquivo index.ts em cada modulo e indicar uma exportação de tudo o que há no modulo
+ex: export * from './calculadora.module'
+
+
+--- componente
+- uma subdivisão / parte do modulo
+- deve fazer uma coisa específica
+- para um componente ser visivel em outro componente, deve-se importá-lo em seu módulo e exportá-lo também
+- classes angular que tem um tempo de vida definido, template para definir aparência e selector (tag) para ser usado em outras partes da aplicação
+
+
+
+--- property binding
+- linkar valor de uma prop de elemento a uma expressão angular, q pode avaliar para uma prop de um componente, método, etc
+- sintaxe com [] ao redor da propriedade do DOM
+- pode ser aplicado a qualquer propriedade de elementos do DOM
+- one way binding do componente para o template
+
+- ex:
+// no componente
+user = {name: 'Teste'}
+
+// no DOM
+<input type="text" [value]="user.name" />
+
+- é possível avaliar também expressões booleanas:
+
+user = {show: true}
+
+<div [hidden]="!user.show> ... </div>
+
+- para que um atributo possa ser modificado pelo componente parent, ele deve ser decorado com @Input
+
+-ex:
+// no componente x-header
+@Input() title: string
+
+// no html
+<x-header title="Meu app"></xheader>
+
+- é possível alterar o nome q o atribulo irá assumir usando algum valor dentro do input
+
+@Input('value') title: string
+
+- sintaxe de property binding: [prop]
+
+- para passar valores não string (bool ou int por exemplo) é necessário aplicar a sintaxe do property binding no html
+
+- ex:
+<app-teste name="Oi" [varBool]="false"></app-teste>
+
+
+
+--- Diretivas
+
+
+- componentes são diretivas com templates
+
+- serve para adicionar comportamento no dom mas sem template
+
+- há 3 tipos de diretivas no angular:
+. componentes
+. estruturais: mudam template ou estrutura do dom
+. atributos: associa atributo a um elemento do dom e algum comportamento é aplicado aquele atributo
+
+ex: *ngIf
+
+<div *ngIf="user.isJedi"></div>
+
+- o * é uma forma abreviada da diretiva, para não precisar usar o elemento template
+<template [ngIf]="user.isJedi">
+</template>
+
+
+ex: *ngFor
+<ul>
+    <li *ngFor="let user of users"> {{user.name}} </li>
+</ul>
+
+. também é possível contar o indice
+<ul>
+    <li *ngFor="let user of users; let i = index"> 
+	{{user.name}} 
+    </li>
+</ul>
+
+
+ex: [ngSwitch]
+<div [ngSwitch]="profile">
+  <p *ngSwitchCase="root">AAA</p>
+  <p *ngSwitchCase="user">BBB</p>
+  <p *ngSwitchDefault>CCC</p>
+</div>
+
+
+--- operador de navegação segura
+
+- caso componente seja chamado sem um objeto necessário, pode-se usar um *ngIf="objeto" para definir se conteúdo vai ou não aparecer na tela
+
+- caso uma propriedade esteja vazia, para não dar erro, pode-se usar objeto?.propriedade para torná-la opcional
+
+
+--- Eventos
+
+- sintaxe: ()
+
+ex: <button (click)="clicou()">Clique!</buttom>
+
+// no componente
+clicked():void {
+    console.log("Clicou no botão!")
+}
+
+- também pode-se pegar referência ao evento a partir do objeto $event
+
+ex: <button (click)="clicou($event)">Clique!</buttom>
+
+// no componente
+clicked():void {
+    console.log("Clicou no botão: ${event}!")
+}
+
+- alguns eventos como keydown podem ser entendidos como objetos, daí se usa o evento keydown.space (por exemplo)
+
+<input (keydown.space)="keyDown($event)">
+
+
+
+--- EventEmitter
+
+- eventos personalizados de um componente
+
+- adapter da biblioteca rx.js
+
+- possui o método emit() que é chamado na hora de emitir o evento 
+
+- é necessário importar a classe Output, que é análoga aou Input, que serve para emitir o evento
+
+ex: <button (click)="clicou($event)">Clique!</buttom>
+
+// no componente
+import { Component, Output, EventEmitter} from '@angular/core
+
+@Output() myEvent = new EventEmitter()
+
+clicked():void {
+    this.myEvent.emit()
+}
+
+- usando o componente, pode-se atribuir qual método será chamado quando evento for emitido
+
+<x-teste (myEvent)="metodoChamado()"><x-teste>
+
+// no componente
+metodoChamado(): void{
+    console.log("Evento foi emitido")
+}
+
+
+--- variáveis de template
+
+- usa-se #nomeDaVariavel para setar um "apelido" para o campo
+
+ex: <textarea #descricao></textarea>
+
+- permite usar uma referência do elemento dentro do template ou passar uma referência em um método
+
+ex:
+<button (click)="descricao.focus()"></button>
+
+
+--- ROTAS
+
+- para marcar uma área como dinâmica (seu conteúdo ser alterado conforme a rota) usa-se a marcação <router-outlet>, região na qual os componentes serão colocados
+
+- para isso é necessário mapear cada componente em algo chamado de rota, q é um array contendo o mapeamento de cada caminho e cada componente
+
+ex:
+
+export const Routes: Route = [
+    { path: '', component: RestaurantsComponent },
+    { path: 'restaurant/:id', component: RestaurantsComponent },
+    { path: 'about', component: AboutComponent },
+]
+
+- rotas aceitam parâmetros usando a sintaxe de : seguido do nome do parâmetro
+ex - :parametro
+
+- é necessário indicar que rotas serão usadas no módulo através da função forRoot no módulo raiz ou forChild nos outros modulos
+
+ex:
+@NgModule({
+    declarations: [...]
+    imports: [..., RouterModule.forRoot(ROUTES)]
+})
+
+- para acionar os caminhos, usa-se a diretiva routerLink como propriedade
+
+ex:
+<a routerLink="/restaurants">Restaurantes</a>
+ou
+<a [routerLink]="['/restaurants']">Restaurantes</a>
+
+- para elementos receberem dinamicamente uma classe CSS indicando que rota está ativa, usa-se a diretiva routerLinkActive com a classe CSS desejada
+
+ex:
+<li routerLinkActive="active"></li>
+
+
+
+--- INJEÇÃO DE DEPENDÊNCIA
+
+- é necessário declará-la em providers
+
+- no componente, fica disponível para o componente e seus filhos
+
+ex:
+@Component({providers: [MyService]})
+
+export class MyComponent{
+    constructor(private myService: MyService)
+}
+
+ou no módulo:
+
+@NgModule({
+    declarations: [...],
+    providers: [MyService]
+})
+
+- no módulo, fica disponível para todos os componentes do módulo
+
+---- SERVIÇOS
+
+- 3 escopos para declarar
+. módulos			- providers
+. componentes e filhos		- providers
+. somente componente		- viewProviders
+
+- serviços marcados como @Injectable() solicitam injeção de outros serviços
+ (receber injeção)
+ como:
+. http 
+. router 
+. title - usado para alterar o título da página
+
+
+--- PROGRAMAÇÃO REATIVA
+
+- baseada em eventos (observer)
+
+- padrão iterator + observer
+
+- objeto interessado escuta a eventos de um objeto de interesse
+- usado através da lib rxjs
+
+- objeto do tipo Observable
+
+
+--- ROTA PARAMETRIZADA
+
+- usa-se : seguido do parâmetro na declaração da rota
+
+ex: '/produtos/:id'
+
+- para passar o valor indica-se a diretiva routerLink com dois parâmetros: a rota seguida do elemento
+
+ex:
+<a [routerLink]="['/restaurant', restaurant.id]"> Restaurante </a>
+
+- há duas formas de obter parâmetros:
+
+. a partir do snapshot: uma 'fotografia' do parâmetro no momento em q for pedido
+
+. subscribe: se inscrevendo na rota e escutando a mudança de parâmetros
+
+--- SNAPSHOT
+
+- 1: injeta o objeto ActivatedRoute, q representa a rota ativa no momento
+
+ex: 
+constructor(private route: ActivatedRoute){}
+
+
+
+
+- 2: receber o valor através do atributo snapshot.params[] no ngOnInit
+
+ex: 
+
+ngOnInit(){
+    const id = this.route.snapshot.params['id']
+}
+
+
+- util quando não se preocupa quando a rota vai mudar e o componente 'sai de cena' e entra depois, sendo destruido e criado novamente
+
+
+--- SUBSCRIBE
+
+- usado para atualizar um componente que está na tela e não é destruído, por exemplo, ao clicar em um item, um componente ao lado atualiza seus dados sem 'desaparecer' e ser recriado
+
+- também injeta-se a classe ActivatedRoute
+
+- usa-se a função subscribe dentro da propriedade params que recebe um lambda
+
+ex:
+ngOnInit(){
+    this.route.params.subscribe (params -> {
+
+        const id = params['id']
+        this.id = ///...
+    })
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
