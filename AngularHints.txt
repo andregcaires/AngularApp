@@ -322,6 +322,93 @@ ngOnInit(){
 }
 
 
+---- NAVEGAÇÃO EM ROTAS FILHAS
+
+- no objeto que declara as rotas, adiciona-se o objeto children, que recebe um array com as rotas filhas (subrotas)
+
+{path: 'restaurants/:id', c omponent: RestaurantDetailComponent, children: [
+    {path: '', redirectTo: 'menu', pathMatch: 'full'},
+    {path: 'menu', component: MenuComponent},
+    {path: 'reviews', component: ReviewsComponent}
+]}
+
+
+* o primeiro path na lista define o path padrão para redirecionar ao menu. Por exemplo, quando usuário entrar no details, a url será restaurant/id, sem definir um /id/menu ou /id/reviews. Com essa declaração, ao entrar em details, o menu será carregado
+
+- no componente pai (RestaurantDetail), coloca-se um router outlet
+
+- para o componente filho acessar um parâmetro da url do componente pai, usa-se o atributo parent do ActivatedRoute
+
+this.routes.parent.snapshot.params['id']
+
+
+---- PIPES
+
+- são responsáveis por transformações de dados em uma apresentação diferente
+
+- formatar datas, numeros, moedas, strings
+
+ex: // component
+user: {name: 'Luke', isJedi: true}
+
+// sem pipes
+<div> {{user}} </div>
+
+// result: 
+<div> object Object </div>
+
+// ----------
+
+// com pipe json:
+<div> {{user | json }} </div>
+
+// result:
+
+<div> {name: 'Luke', isJedi: true} </div>
+
+- a sintaxe do pipe é o objeto seguido de um | e o nome do pipe
+
+- outros pipes:
+. uppercase
+. lowercase
+
+. percent
+<div> {{ 0.5 | percent }} </div> 
+// <div> 50% </div>
+
+. date (passa-se o formato como parâmetro)
+<div> {{ dataNasc | date: 'dd/MM/yyyy' }} </div> 
+// <div> 01/01/1993 </div>
+
+. slice: 0:4 (indica uma substring até o 4 caractere)
+
+
+- para moedas, usa-se o pipe currency, q recebe 3 parâmetros opcionais
+
+. o 1 indica a string ISO, representando a moeda a ser usada
+
+. 2 indica se usa o simbolo ao inves da string iso
+
+. o 3 indica o formato do numero
+
+
+- pipes podem ser concatenados, combinados
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
