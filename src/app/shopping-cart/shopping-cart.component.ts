@@ -15,6 +15,18 @@ export class ShoppingCartComponent implements OnInit {
     return this.shoppingCartService.total()
   }
 
+  clear(){
+    this.shoppingCartService.clear()
+  }
+
+  removeItem(item: any){
+    this.shoppingCartService.remove(item)
+  }
+
+  addItem(item: any){
+    this.shoppingCartService.add(item)
+  }
+
   constructor(private shoppingCartService: ShoppingCartService) { }
 
   ngOnInit() {
