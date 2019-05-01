@@ -396,13 +396,33 @@ user: {name: 'Luke', isJedi: true}
 
 
 
+*** template forms
 
+- usa-se a diretiva ngmodel
 
+- sempre q é usada a tag form, o angular automaticamente declara a diretiva ngform de forma implicita
 
+- com essa diretiva pode-se determinar validade e valor do form, e outros status como dirty, pristine e touched
 
+- é preciso usar a diretiva ngModel nos inputs
 
+- é possivel usar one way binding no ngModel para associar valor do campo com uma propriedade no componente 
+ex:
+<input type="text" name="name" [ngModel]="username" />
 
+@Component({...})
+export class UserComponent {
+    username: string = "Nome do usuário"
+}
 
+- é possível também usar two way binding
+ex:
+<input type="text" name="name" [(ngModel)]="username" />
+
+- pode-se também usar uma referencia para a diretiva ngform através de template variables e construir expressões que ajudam a controlar o acesso a certos componentes do form, por exemplo, habilitar ou não um botão com base na validade do form
+<form #myForm="ngForm">
+    <button [disabled]="myForm.invalid"></button>
+</form>
 
 
 
